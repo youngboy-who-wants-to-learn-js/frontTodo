@@ -1,0 +1,22 @@
+Фильтры: 
+- по периоду:все,  сегодня, - 7 дней, -30 дней, 2 месяца, -180дней
+- * с ДД по ДД 
+- валидация , если выбрал в * будущее
+- один фильтр может быть активным 
+
+//TODO filterNam rename status
+// dateFrom dateTo
+// rename loadTodosRequest
+// вызывать пустой loadTodosRequest()  и в саге в select вытаскивать название фльтров
+
+// Formik add
+// * user Add phone number, address, age ( 16 < x < 99 )
+// создать отдельную табилцу UserContacts w\ *
+
+// add popup with UsersContacts userClick
+
+// jest test api
+// supertest
+// при запуске тестов : миграция подготовка бд, а потом запкусканм тест
+
+// юзер пытается проапдейтить чужую тудушку 

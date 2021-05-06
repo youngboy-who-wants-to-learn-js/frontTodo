@@ -1,0 +1,23 @@
+{
+  "test": {
+    "username": "admin",
+    "password": "password",
+    "database": "todos_testdb",
+    "host": "localhost",
+    "dialect": "mariadb"
+  },
+  "development": {
+    "username": "admin",
+    "password": "password",
+    "database": "todosdb",
+    "host": "localhost",
+    "dialect": "mariadb"
+  },
+  "production": {
+    "username": "root",
+    "password": null,
+    "database": "database_production",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  }
+}

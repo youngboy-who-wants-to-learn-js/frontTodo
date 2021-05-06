@@ -1,0 +1,197 @@
+import dotenv from 'dotenv';
+import { DataTypes } from 'sequelize';
+import { USER_ROLE_USER } from '../enums/role';
+import { USER_STATUS_ACTIVE } from '../enums/status';
+import db from './index';
+
+dotenv.config();
+
+// const databaseName = process.env.JEST_WORKER_ID
+//   ? process.env.TEST_DB_NAME
+//   : process.env.DEV_DB_NAME;
+
+// const sequelize = new Sequelize(
+//   'todos_testdb',
+//   process.env.DEV_DB_USER,
+//   process.env.DEV_DB_PASS,
+//   {
+//     dialect: 'mariadb',
+//     host: process.env.DEV_DB_HOST,
+//     pool: {
+//       max: 5,
+//       min: 0,
+//       acquire: 30000,
+//       idle: 10000,
+//     },
+//     define: {
+//       timestamps: true,
+//     },
+//   }
+// );
+
+const Users = db.sequelize.define('Users', {
+  id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+    allowNull: false,
+  },
+  userName: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: {
+      args: true,
+      msg: 'Such user name is already registered',
+    },
+    validate: {
+      notEmpty: {
+        args: true,
+        msg: 'User name cannot be empty',
+      },
+    },
+  },
+  email: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: {
+      args: true,
+      msg: 'Such email is already registered',
+    },
+    validate: {
+      isEmail: {
+        args: true,
+        msg: 'Invalid email format',
+      },
+      notEmpty: {
+        args: true,
+        msg: 'Email cannot be empty',
+      },
+    },
+  },
+  password: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    validate: {
+      notEmpty: {
+        args: true,
+        msg: 'Password cannot be empty',
+      },
+      len: {
+        args: 8,
+        msg: 'Minimum 8 characters required in password',
+      },
+    },
+  },
+  status: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    defaultValue: USER_STATUS_ACTIVE,
+    validate: {
+      notEmpty: {
+        args: true,
+        msg: 'Status cannot be empty',
+      },
+    },
+  },
+  role: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    defaultValue: USER_ROLE_USER,
+    validate: {
+      notEmpty: {
+        args: true,
+        msg: 'Role cannot be empty',
+      },
+    },
+  },
+});
+
+const UserContacts = db.sequelize.define('UserContacts', {
+  address: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    validate: {
+      notEmpty: {
+        args: true,
+        msg: 'Address name cannot be empty',
+      },
+    },
+  },
+  age: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    validate: {
+      notEmpty: {
+        args: true,
+        msg: 'Age cannot be empty',
+      },
+      min: 16,
+      max: 99,
+    },
+  },
+  phone: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    validate: {
+      notEmpty: {
+        args: true,
+        msg: 'Age cannot be empty',
+      },
+      is: /\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{4})/g,
+    },
+  },
+});
+
+const Todos = db.sequelize.define('Todos', {
+  id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+    allowNull: false,
+  },
+  text: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    validate: {
+      notEmpty: {
+        args: true,
+        msg: 'Text cannot be empty',
+      },
+    },
+  },
+  completed: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  },
+});
+
+const Tokens = db.sequelize.define('Tokens', {
+  tokenId: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    primaryKey: true,
+  },
+  userId: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+});
+
+Users.hasMany(Todos, { onDelete: 'cascade', onUpdate: 'cascade' });
+Todos.belongsTo(Users);
+
+Tokens.hasOne(Users, { onDelete: 'cascade', onUpdate: 'cascade' });
+Users.belongsTo(Tokens);
+
+UserContacts.hasOne(Users, { onDelete: 'cascade', onUpdate: 'cascade' });
+Users.belongsTo(UserContacts);
+
+db.sequelize
+  .sync()
+  .then(() => {
+    console.log('DB have been created!');
+  })
+  .catch((err) => console.log(err));
+
+export { Todos, Users, Tokens, UserContacts };
