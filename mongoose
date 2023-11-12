@@ -1,0 +1,86 @@
+  // const filterName =
+  //   req.query.filter === "active"
+  //     ? { completed: false }
+  //     : req.query.filter === "completed"
+  //     ? { completed: true }
+  //     : {};
+  // try {
+  //   const result = await Todo.find(filterName);
+  //   res.status(200).send(result);
+  // } catch (e) {
+  //   console.log("getAllTodos", e);
+  // }
+
+
+    // try {
+  //   const todo = new Todo({ text });
+  //   const result = await todo.save();
+  //   res.status(200).send(result);
+  // } catch (e) {
+  //   console.log("addNewTodo", e);
+  // }
+
+    // try {
+  //   const result = await Todo.findOneAndDelete({ id });
+  //   res.status(200).send(result);
+  // } catch (e) {
+  //   console.log("deleteTodo", e);
+  // }
+
+    // const id = req.params.id;
+  // try {
+  //   const result = await Todo.findOneAndUpdate({ id }, req.body, { new: true });
+  //   res.status(200).send(result);
+  // } catch (e) {
+  //   console.log("updateTodo", e);
+  // }
+
+
+    // await Todo.deleteMany({
+  //   id: {
+  //     $in: ids,
+  //   },
+  // });
+  // res.status(200).send();
+
+  // await Todo.updateMany(
+//   { id: { $in: body.ids } },
+//   { $set: { completed: body.value } }
+// );
+
+// --------------- MODEL
+import mongoose from "mongoose";
+import AutoIncrementFactory from "mongoose-sequence";
+const Schema = mongoose.Schema;
+
+mongoose.connect("mongodb://localhost:27017/todosdb", {
+  useUnifiedTopology: true,
+  useNewUrlParser: true,
+  useFindAndModify: false,
+});
+
+const AutoIncrement = AutoIncrementFactory(mongoose.connection);
+
+const todoSchema = new Schema(
+  {
+    id: Number,
+    text: {
+      type: String,
+      required: true,
+    },
+    completed: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+    userId: {
+      type: Number,
+      required: true
+    }
+  },
+  { versionKey: false, timestamps: true }
+);
+
+todoSchema.plugin(AutoIncrement, { inc_field: "id" });
+
+export default mongoose.model("Todo", todoSchema);
